@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex" />
+    <title>Lee and the Bots</title>
+    <style>:root{--ink:#2b3a2e;--soft:#5c6b5e;--red:#c9463b;--yellow:#f4c430}html,body{touch-action:none;height:100%;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;background:radial-gradient(90% 70% at 72% 22%,#fffdf6 0%,#fffdf600 70%),linear-gradient(200deg,#f7f1df 0%,#ece9d2 55%,#dfe6cf 100%);margin:0;font-family:ui-rounded,SF Pro Rounded,Nunito,Avenir Next,system-ui,sans-serif;overflow:hidden}#stage{cursor:grab;opacity:0;width:100%;height:100%;transition:opacity 1.4s;display:block}#stage.pulling{cursor:grabbing}body.ready #stage{opacity:1}#loading{color:var(--soft);pointer-events:none;place-items:center;font-size:18px;font-weight:600;transition:opacity .6s;display:grid;position:fixed;inset:0}body.ready #loading{opacity:0}button,.home{font:inherit;color:var(--ink);cursor:pointer;white-space:nowrap;touch-action:manipulation;background:#ffffffe6;border:0;border-radius:999px;font-weight:700;transition:transform .16s,background .18s,opacity .3s;box-shadow:0 1px 2px #4a3a1c29,0 6px 18px #4a3a1c1f}.round{place-items:center;width:56px;height:56px;padding:0;display:grid}.round svg{fill:none;stroke:currentColor;stroke-width:2.4px;stroke-linecap:round;stroke-linejoin:round;width:30px;height:30px}.turn{width:64px;height:64px}.turn svg{stroke-width:3px;width:34px;height:34px}button:hover:not(:disabled),.home:hover{background:#fff}button:active:not(:disabled),.home:active{transform:scale(.92)}button:disabled{opacity:.3;cursor:default}button:focus-visible,.home:focus-visible{outline:3px solid var(--red);outline-offset:3px}button[aria-pressed=true]{background:var(--yellow)}#sound[aria-pressed=true] .off,#sound[aria-pressed=false] .on,#view[aria-pressed=true] .closer,#view[aria-pressed=false] .wider{display:none}.home{left:max(14px, env(safe-area-inset-left));top:max(14px, env(safe-area-inset-top));position:fixed}.tools{right:max(14px, env(safe-area-inset-right));top:max(14px, env(safe-area-inset-top));gap:10px;display:flex;position:fixed}.bar{left:0;right:0;bottom:max(18px, env(safe-area-inset-bottom));pointer-events:none;justify-content:center;align-items:center;gap:14px;display:flex;position:fixed}.bar>*{pointer-events:auto}.home,.tools,.bar{opacity:0;transition:opacity .8s .6s}.home{transition:opacity .8s .6s,transform .16s,background .18s}body.ready .home,body.ready .tools,body.ready .bar{opacity:1}#place{text-align:center;min-width:120px;color:var(--soft);font-size:16px;font-weight:700}#again{min-height:56px;padding:0 26px;font-size:18px}#hint{left:50%;bottom:calc(max(18px, env(safe-area-inset-bottom)) + 82px);color:var(--soft);text-align:center;pointer-events:none;opacity:0;background:#ffffffdb;border-radius:999px;width:max-content;max-width:calc(100vw - 48px);margin:0;padding:10px 20px;font-size:16px;font-weight:700;transition:opacity .8s;position:fixed;transform:translate(-50%)}body.ready #hint{opacity:1;transition-delay:1.2s}body.ready #hint.gone{opacity:0;transition-delay:0s}@media (orientation:landscape){body.one-page .tools{flex-direction:column}body.one-page #place{display:none}body.one-page .turn{position:fixed;top:calc(50% - 32px)}body.one-page #back{left:max(10px, env(safe-area-inset-left))}body.one-page #next{right:max(10px, env(safe-area-inset-right))}body.one-page #hint{bottom:max(22px, env(safe-area-inset-bottom))}}.sr-only{clip-path:inset(50%);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}</style>
+    <script type="module" crossorigin src="./assets/modulepreload-polyfill-P2Xu9kJm.js"></script>
+    <script type="module" crossorigin src="./assets/main-Cybhiy27.js"></script>
+  </head>
+  <body>
+    <canvas id="stage" aria-label="A picture book. Tap or swipe to turn the page."></canvas>
+    <p id="loading">Fetching the book…</p>
+    <p id="hint">Tap the book to open it. Then tap or swipe to go on.</p>
+
+    <a class="home round" href="./" aria-label="Back to the bookshelf">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 26h24M8 26V9h5v17M13 26V6h5v20M19.5 26l-2-15 4.6-.7 2.2 15.2" /></svg>
+    </a>
+    <div class="tools">
+      <button id="view" class="round" type="button" aria-pressed="false" aria-label="Show one page, bigger">
+        <svg class="closer" viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="14" r="8.5" /><path d="M20.5 20.5L27 27M14 10.5v7M10.5 14h7" /></svg>
+        <svg class="wider" viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="14" r="8.5" /><path d="M20.5 20.5L27 27M10.5 14h7" /></svg>
+      </button>
+      <button id="sound" class="round" type="button" aria-pressed="true" aria-label="Turn the page sounds off">
+        <svg class="on" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 12.5v7h4.5L16 25V7l-6.5 5.5zM20.5 12a5.6 5.6 0 0 1 0 8M23.8 8.5a10.4 10.4 0 0 1 0 15" /></svg>
+        <svg class="off" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 12.5v7h4.5L16 25V7l-6.5 5.5zM21 12.5l6 7M27 12.5l-6 7" /></svg>
+      </button>
+    </div>
+
+    <div class="bar">
+      <button id="back" class="round turn" type="button" aria-label="Go back">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M19.5 7l-9 9 9 9" /></svg>
+      </button>
+      <span id="place">Cover</span>
+      <button id="next" class="round turn" type="button" aria-label="Go on">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M12.5 7l9 9-9 9" /></svg>
+      </button>
+      <button id="again" type="button" hidden>Read again</button>
+    </div>
+
+    <p id="spoken" class="sr-only" aria-live="polite"></p>
+    <script type="application/json" id="book">
+{
+ "faces": "/books/lee/",
+ "items": [
+  {
+   "board": true,
+   "front": "cover-front",
+   "back": "endpaper"
+  },
+  {
+   "front": "title",
+   "back": "text-01"
+  },
+  {
+   "front": "pic-01",
+   "back": "text-02"
+  },
+  {
+   "front": "pic-02",
+   "back": "text-03"
+  },
+  {
+   "front": "pic-03",
+   "back": "text-04"
+  },
+  {
+   "front": "pic-04",
+   "back": "text-05"
+  },
+  {
+   "front": "pic-05",
+   "back": "text-06"
+  },
+  {
+   "front": "pic-06",
+   "back": "text-07"
+  },
+  {
+   "front": "pic-07",
+   "back": "text-08"
+  },
+  {
+   "front": "pic-08",
+   "back": "text-09"
+  },
+  {
+   "front": "pic-09",
+   "back": "text-10"
+  },
+  {
+   "front": "pic-10",
+   "back": "text-11"
+  },
+  {
+   "front": "pic-11",
+   "back": "text-12"
+  },
+  {
+   "front": "pic-12",
+   "back": "words"
+  },
+  {
+   "front": "activities",
+   "back": "the-end"
+  },
+  {
+   "board": true,
+   "front": "endpaper",
+   "back": "cover-back"
+  }
+ ],
+ "views": [
+  [
+   "Cover",
+   "Cover. 小力和机器人. Lee and the Bots."
+  ],
+  [
+   "Title page",
+   "Title page. 小力和机器人. Lee and the Bots."
+  ],
+  [
+   "Page 1",
+   "Page 1. 小力和贝贝在游乐场的地上用粉笔画了一座城市。大壮拍着球，从城市中间跑了过去。“哎呀。”大壮笑着说。小力很想说“停下！”，可是这句话卡在喉咙里。他觉得自己好小好小。 Lee and Bea were drawing a chalk city on the playground. Then Max bounced his ball right through the middle of it. “Oops,” said Max, and laughed. Lee wanted to say “Stop!” But the word stayed stuck inside him, and he felt very small. Word: 小, xiǎo, small."
+  ],
+  [
+   "Page 2",
+   "Page 2. 小力低着头往家走。就这样，他看见滑梯下面有一个灰色的东西，像一只没有手指的手套。他把它捡了起来，戴在手上试了试。 Lee walked home with his head down. That is how he saw it: something grey lying under the slide, like a glove with no fingers. He picked it up. He slid it onto his hand, just to see. Word: 手, shǒu, hand."
+  ],
+  [
+   "Page 3",
+   "Page 3. 手套摘不下来了！他拉呀，转呀，还抹了肥皂，都没有用。吃晚饭的时候，他把手藏在桌子下面。桌子下面，有一点光亮了起来，淡淡的，红红的。 It would not come off. He pulled. He twisted. He tried soap. All through dinner he kept his hand under the table, and under the table a little light was glowing, soft and red. Word: 红, hóng, red."
+  ],
+  [
+   "Page 4",
+   "Page 4. 回到房间，小力轻轻一跳，想拿书架顶上的书，头却“咚”地碰到了天花板。他用一根手指推了推床，床就滑到了房间的另一边。“哇！”小力说。 In his room, Lee hopped up to reach his top shelf, and his head bumped the ceiling. He pushed his bed with one finger, and it slid across the floor. “Whoa,” said Lee. Word: 跳, tiào, to jump."
+  ],
+  [
+   "Page 5",
+   "Page 5. 嗒，嗒，嗒，有人在敲窗户。窗台上站着三个小小的机器人，还没有他的手掌高。“我是闪电。”红色的说。“我是大盾。”蓝色的说。“我是小豆。”最小的那个说，“我们是机器人小队。手套选中了你，小力。这座城市需要帮助。” Tap, tap, tap, at the window. Three tiny robots stood on the sill, no taller than his hand. “I am Bolt,” said the red one. “Block,” said the blue one. “And I am Pip,” said the smallest. “We are the Bots. The band has chosen you, Lee. The city needs help.” Word: 帮, bāng, to help."
+  ],
+  [
+   "Page 6",
+   "Page 6. 菜市场的街上，一个骑摩托车的人抢走了老奶奶的袋子。小力跑了起来，比摩托车还快，比公共汽车还快！闪电冲在最前面，大盾把盾牌滚到了车轮下面。摩托车摇摇晃晃地停住了。小力一把接住袋子，一个橘子也没有掉。 On the market street, a man on a scooter grabbed an old lady's shopping bag. Lee ran, faster than the scooter, faster than the bus! Bolt zipped ahead. Block rolled his shield under the wheel. The scooter wobbled and stopped, and Lee caught the bag before a single orange fell out. Word: 快, kuài, fast."
+  ],
+  [
+   "Page 7",
+   "Page 7. 四楼的窗台上，有一只小猫下不来了。小力用力一跳，小豆飞在旁边给他带路，把小猫救了下来。街角，一辆婴儿车顺着斜坡滑了下去。小力伸出一只手，三个机器人一起推，车停住了。“谢谢你们！”大家说。小力觉得自己从来没有这么高大过。 Up on the fourth floor, a kitten was stuck on a ledge. Lee jumped, and Pip flew beside him to show the way. At the corner, a baby's pram began to roll down the hill. Lee and the Bots stopped it with one hand and three small pushes. “Thank you!” everyone said. Lee had never felt so tall. Word: 救, jiù, to save."
+  ],
+  [
+   "Page 8",
+   "Page 8. 第二天，在游乐场，大壮把贝贝的粉笔踢进了水沟。贝贝快要哭了。小力张开嘴想说话，可是那句话又卡住了。他低头看了看手套。光，灭了。 The next day at the playground, Max kicked Bea's chalk into the drain. Bea was close to tears. Lee opened his mouth to speak. But the word was stuck again. He looked down at the band. Its light had gone out. Word: 说, shuō, to say."
+  ],
+  [
+   "Page 9",
+   "Page 9. 小力抱着膝盖坐在楼顶上。“我能抓住小偷，”他说，“为什么说不出一句话？我一点也不勇敢。厉害的是手套。”小豆爬到他的膝盖上。“小力，”小豆说，“手套里没有力量。你的心勇敢的时候，它才会亮。每一次跳起来的，都是你自己。” Lee sat on the roof with his knees up. “I can catch a thief,” he said. “Why can't I say one word? I'm not brave. It was only the band.” Pip climbed onto his knee. “Lee,” said Pip, “the band has no power in it. It only glows when your heart is being brave. Every jump was you.” Word: 心, xīn, heart."
+  ],
+  [
+   "Page 10",
+   "Page 10. 小力走回游乐场。他的腿在发抖。他没有跳，也没有跑。他站到大壮和贝贝中间。这一次，他敢说了：“停下！这样不对。把粉笔捡回来。”他手上的手套，比什么时候都亮。 Lee walked back to the playground. His knees were shaking. He did not jump. He did not run. He stood between Max and Bea, and this time he dared to say it. “Stop. That's not kind. Get her chalk back.” And on his hand, the band shone brighter than it ever had. Word: 敢, gǎn, to dare."
+  ],
+  [
+   "Page 11",
+   "Page 11. 大壮看了小力很久。然后，他把粉笔从水沟里捞了出来。“对不起。”他小声说。贝贝笑了，小力也笑了。他一直很害怕，可是他还是做到了。小力想：原来，这就是勇敢。 Max looked at Lee for a long time. Then he fished the chalk out of the drain. “Sorry,” he mumbled. Bea smiled. Lee smiled too. He had been scared the whole time, and he had done it anyway. So that is what brave is, he thought. Word: 笑, xiào, to smile."
+  ],
+  [
+   "Page 12",
+   "Page 12. 那天晚上，手套一闪一闪地亮了。不是红色，是蓝色！机器人们跑到窗边。远远的，一个又一个楼顶上，别的小光点也在一闪一闪。“还有更多的伙伴。”小豆轻轻地说。小力穿上运动鞋：“那我们去认识新朋友吧！” That night the band began to blink. Not red. Blue! The Bots ran to the window. Far across the city, on roof after roof, other little lights were blinking back. “There are more of us,” whispered Pip. Lee pulled on his trainers. “Then let's go and meet them,” he said. Word: 新, xīn, new."
+  ],
+  [
+   "For grown-ups",
+   "For grown-ups. The words in this book, and three things to do together."
+  ],
+  [
+   "The end",
+   "完. The end."
+  ],
+  [
+   "Back cover",
+   "Back cover."
+  ]
+ ]
+}
+    </script>
+  </body>
+</html>

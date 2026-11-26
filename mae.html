@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex" />
+    <title>Mae and the Wishing Lantern</title>
+    <style>:root{--ink:#2b3a2e;--soft:#5c6b5e;--red:#c9463b;--yellow:#f4c430}html,body{touch-action:none;height:100%;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;background:radial-gradient(90% 70% at 72% 22%,#fffdf6 0%,#fffdf600 70%),linear-gradient(200deg,#f7f1df 0%,#ece9d2 55%,#dfe6cf 100%);margin:0;font-family:ui-rounded,SF Pro Rounded,Nunito,Avenir Next,system-ui,sans-serif;overflow:hidden}#stage{cursor:grab;opacity:0;width:100%;height:100%;transition:opacity 1.4s;display:block}#stage.pulling{cursor:grabbing}body.ready #stage{opacity:1}#loading{color:var(--soft);pointer-events:none;place-items:center;font-size:18px;font-weight:600;transition:opacity .6s;display:grid;position:fixed;inset:0}body.ready #loading{opacity:0}button,.home{font:inherit;color:var(--ink);cursor:pointer;white-space:nowrap;touch-action:manipulation;background:#ffffffe6;border:0;border-radius:999px;font-weight:700;transition:transform .16s,background .18s,opacity .3s;box-shadow:0 1px 2px #4a3a1c29,0 6px 18px #4a3a1c1f}.round{place-items:center;width:56px;height:56px;padding:0;display:grid}.round svg{fill:none;stroke:currentColor;stroke-width:2.4px;stroke-linecap:round;stroke-linejoin:round;width:30px;height:30px}.turn{width:64px;height:64px}.turn svg{stroke-width:3px;width:34px;height:34px}button:hover:not(:disabled),.home:hover{background:#fff}button:active:not(:disabled),.home:active{transform:scale(.92)}button:disabled{opacity:.3;cursor:default}button:focus-visible,.home:focus-visible{outline:3px solid var(--red);outline-offset:3px}button[aria-pressed=true]{background:var(--yellow)}#sound[aria-pressed=true] .off,#sound[aria-pressed=false] .on,#view[aria-pressed=true] .closer,#view[aria-pressed=false] .wider{display:none}.home{left:max(14px, env(safe-area-inset-left));top:max(14px, env(safe-area-inset-top));position:fixed}.tools{right:max(14px, env(safe-area-inset-right));top:max(14px, env(safe-area-inset-top));gap:10px;display:flex;position:fixed}.bar{left:0;right:0;bottom:max(18px, env(safe-area-inset-bottom));pointer-events:none;justify-content:center;align-items:center;gap:14px;display:flex;position:fixed}.bar>*{pointer-events:auto}.home,.tools,.bar{opacity:0;transition:opacity .8s .6s}.home{transition:opacity .8s .6s,transform .16s,background .18s}body.ready .home,body.ready .tools,body.ready .bar{opacity:1}#place{text-align:center;min-width:120px;color:var(--soft);font-size:16px;font-weight:700}#again{min-height:56px;padding:0 26px;font-size:18px}#hint{left:50%;bottom:calc(max(18px, env(safe-area-inset-bottom)) + 82px);color:var(--soft);text-align:center;pointer-events:none;opacity:0;background:#ffffffdb;border-radius:999px;width:max-content;max-width:calc(100vw - 48px);margin:0;padding:10px 20px;font-size:16px;font-weight:700;transition:opacity .8s;position:fixed;transform:translate(-50%)}body.ready #hint{opacity:1;transition-delay:1.2s}body.ready #hint.gone{opacity:0;transition-delay:0s}@media (orientation:landscape){body.one-page .tools{flex-direction:column}body.one-page #place{display:none}body.one-page .turn{position:fixed;top:calc(50% - 32px)}body.one-page #back{left:max(10px, env(safe-area-inset-left))}body.one-page #next{right:max(10px, env(safe-area-inset-right))}body.one-page #hint{bottom:max(22px, env(safe-area-inset-bottom))}}.sr-only{clip-path:inset(50%);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}</style>
+    <script type="module" crossorigin src="./assets/modulepreload-polyfill-P2Xu9kJm.js"></script>
+    <script type="module" crossorigin src="./assets/main-Cybhiy27.js"></script>
+  </head>
+  <body>
+    <canvas id="stage" aria-label="A picture book. Tap or swipe to turn the page."></canvas>
+    <p id="loading">Fetching the book…</p>
+    <p id="hint">Tap the book to open it. Then tap or swipe to go on.</p>
+
+    <a class="home round" href="./" aria-label="Back to the bookshelf">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 26h24M8 26V9h5v17M13 26V6h5v20M19.5 26l-2-15 4.6-.7 2.2 15.2" /></svg>
+    </a>
+    <div class="tools">
+      <button id="view" class="round" type="button" aria-pressed="false" aria-label="Show one page, bigger">
+        <svg class="closer" viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="14" r="8.5" /><path d="M20.5 20.5L27 27M14 10.5v7M10.5 14h7" /></svg>
+        <svg class="wider" viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="14" r="8.5" /><path d="M20.5 20.5L27 27M10.5 14h7" /></svg>
+      </button>
+      <button id="sound" class="round" type="button" aria-pressed="true" aria-label="Turn the page sounds off">
+        <svg class="on" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 12.5v7h4.5L16 25V7l-6.5 5.5zM20.5 12a5.6 5.6 0 0 1 0 8M23.8 8.5a10.4 10.4 0 0 1 0 15" /></svg>
+        <svg class="off" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 12.5v7h4.5L16 25V7l-6.5 5.5zM21 12.5l6 7M27 12.5l-6 7" /></svg>
+      </button>
+    </div>
+
+    <div class="bar">
+      <button id="back" class="round turn" type="button" aria-label="Go back">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M19.5 7l-9 9 9 9" /></svg>
+      </button>
+      <span id="place">Cover</span>
+      <button id="next" class="round turn" type="button" aria-label="Go on">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M12.5 7l9 9-9 9" /></svg>
+      </button>
+      <button id="again" type="button" hidden>Read again</button>
+    </div>
+
+    <p id="spoken" class="sr-only" aria-live="polite"></p>
+    <script type="application/json" id="book">
+{
+ "faces": "/books/mae/",
+ "items": [
+  {
+   "board": true,
+   "front": "cover-front",
+   "back": "endpaper"
+  },
+  {
+   "front": "title",
+   "back": "text-01"
+  },
+  {
+   "front": "pic-01",
+   "back": "text-02"
+  },
+  {
+   "front": "pic-02",
+   "back": "text-03"
+  },
+  {
+   "front": "pic-03",
+   "back": "text-04"
+  },
+  {
+   "front": "pic-04",
+   "back": "text-05"
+  },
+  {
+   "front": "pic-05",
+   "back": "text-06"
+  },
+  {
+   "front": "pic-06",
+   "back": "text-07"
+  },
+  {
+   "front": "pic-07",
+   "back": "text-08"
+  },
+  {
+   "front": "pic-08",
+   "back": "text-09"
+  },
+  {
+   "front": "pic-09",
+   "back": "text-10"
+  },
+  {
+   "front": "pic-10",
+   "back": "text-11"
+  },
+  {
+   "front": "pic-11",
+   "back": "text-12"
+  },
+  {
+   "front": "pic-12",
+   "back": "words"
+  },
+  {
+   "front": "activities",
+   "back": "the-end"
+  },
+  {
+   "board": true,
+   "front": "endpaper",
+   "back": "cover-back"
+  }
+ ],
+ "views": [
+  [
+   "Cover",
+   "Cover. 小梅和许愿灯. Mae and the Wishing Lantern."
+  ],
+  [
+   "Title page",
+   "Title page. 小梅和许愿灯. Mae and the Wishing Lantern."
+  ],
+  [
+   "Page 1",
+   "Page 1. 石头山峰比云还高。山顶的松林里，住着一只小独角兽，名叫小梅。 Where the stone peaks stand taller than the clouds, a little unicorn named Mae lived in the pine forest at the very top. Word: 峰, fēng, peak."
+  ],
+  [
+   "Page 2",
+   "Page 2. 小梅全身是淡淡的紫色，鬃毛是粉红色的，还有一只闪着彩虹光的角。可是山上没有别的独角兽，她没有朋友。 Mae was soft purple all over, with a pink mane and a horn that sparkled like a rainbow. But there were no other unicorns on the mountain, and she had no friends. Word: 友, yǒu, friend."
+  ],
+  [
+   "Page 3",
+   "Page 3. 每年元宵节的晚上，山下的村子亮起千万盏灯，像一条星星的河。烟花在天上开了花。她总是先看见亮光，过一会儿才听见“砰”的一声。 Every year, on the night of the Lantern Festival, the village far below lit a thousand lanterns, like a river of stars. Fireworks bloomed in the sky. She always saw the light first and heard the boom a moment later. Word: 灯, dēng, lantern."
+  ],
+  [
+   "Page 4",
+   "Page 4. “我也想去看灯。”小梅轻轻地说，“可是，大家会不会怕我？”她低下头，一个人留在了山顶。 “I wish I could go and see the lanterns,” Mae whispered. “But what if everyone is afraid of me?” She lowered her head and stayed on the mountaintop, all alone. Word: 怕, pà, afraid."
+  ],
+  [
+   "Page 5",
+   "Page 5. 这时，一盏小小的许愿灯穿过云雾飘了上来，落在松树枝上。灯上写着一行字：“我想要一个朋友。” Just then, one small wishing lantern floated up through the mist and came to rest in the pine branches. On it, a child had written: “I wish I had a friend.” Word: 愿, yuàn, wish."
+  ],
+  [
+   "Page 6",
+   "Page 6. 灯里的火苗越来越小。“我要把这个愿望送回家。”她轻轻叼起灯绳，勇敢地走下陡陡的山路。 The little flame inside was growing smaller. “I must carry this wish back home,” said Mae. She took the lantern's string gently in her teeth and bravely set off down the steep mountain path. Word: 勇, yǒng, brave."
+  ],
+  [
+   "Page 7",
+   "Page 7. 森林又黑又静。小梅走过长满青苔的石头，走过一棵开满梅花的老树，小心地护着那一点光。 The forest was dark and still. Mae walked past mossy stones and an old plum tree covered in blossom, keeping the tiny light safe. Word: 梅, méi, plum blossom."
+  ],
+  [
+   "Page 8",
+   "Page 8. 过小溪的时候，一阵大风吹来，火苗“噗”的一声灭了。小梅的心沉了下去，可是她没有停下脚步。 At the stream, a great gust of wind blew, and the flame went out with a puff. Mae's heart sank, but she did not stop walking. Word: 风, fēng, wind."
+  ],
+  [
+   "Page 9",
+   "Page 9. 小梅终于来到村子，可是太晚了。灯会散了，灯笼都暗了，广场上一个人也没有。一滴眼泪落在冰冷的石板上。 At last Mae reached the village, but it was too late. The festival was over, the lanterns were dark, and the square was empty. One tear fell onto the cold stones. Word: 晚, wǎn, late."
+  ],
+  [
+   "Page 10",
+   "Page 10. “那是我的灯！”台阶上坐着一个小女孩，她叫朵朵。朵朵刚搬来村子，没有人陪她看灯。她一点也不害怕：“你把我的愿望送回来了？” “That's my lantern!” A girl was sitting on the steps. Her name was Duoduo. She was new in the village, and no one had kept her company at the festival. She wasn't afraid at all. “You carried my wish all the way down the mountain?” Word: 陪, péi, to keep someone company."
+  ],
+  [
+   "Page 11",
+   "Page 11. 小梅的心里暖暖的。她头上的角亮了起来，彩虹色的光把许愿灯重新点亮了。 Mae felt warm all the way through. Her rainbow horn began to glow, and its light woke the little lantern again. Word: 暖, nuǎn, warm."
+  ],
+  [
+   "Page 12",
+   "Page 12. 第二年的元宵节，烟花又开了。先是亮光，然后是声音。这一次，小梅和朵朵一起数：“一、二、三，砰！”小梅再也不是一个人了。 The next Lantern Festival, the fireworks bloomed again. First the light, then the sound. This time Mae and Duoduo counted together: “One, two, three, boom!” And Mae was never alone again. Word: 伴, bàn, companion."
+  ],
+  [
+   "For grown-ups",
+   "For grown-ups. The words in this book, and three things to do together."
+  ],
+  [
+   "The end",
+   "完. The end."
+  ],
+  [
+   "Back cover",
+   "Back cover."
+  ]
+ ]
+}
+    </script>
+  </body>
+</html>

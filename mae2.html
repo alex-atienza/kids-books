@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex" />
+    <title>Mae and the New Friend</title>
+    <style>:root{--ink:#2b3a2e;--soft:#5c6b5e;--red:#c9463b;--yellow:#f4c430}html,body{touch-action:none;height:100%;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;background:radial-gradient(90% 70% at 72% 22%,#fffdf6 0%,#fffdf600 70%),linear-gradient(200deg,#f7f1df 0%,#ece9d2 55%,#dfe6cf 100%);margin:0;font-family:ui-rounded,SF Pro Rounded,Nunito,Avenir Next,system-ui,sans-serif;overflow:hidden}#stage{cursor:grab;opacity:0;width:100%;height:100%;transition:opacity 1.4s;display:block}#stage.pulling{cursor:grabbing}body.ready #stage{opacity:1}#loading{color:var(--soft);pointer-events:none;place-items:center;font-size:18px;font-weight:600;transition:opacity .6s;display:grid;position:fixed;inset:0}body.ready #loading{opacity:0}button,.home{font:inherit;color:var(--ink);cursor:pointer;white-space:nowrap;touch-action:manipulation;background:#ffffffe6;border:0;border-radius:999px;font-weight:700;transition:transform .16s,background .18s,opacity .3s;box-shadow:0 1px 2px #4a3a1c29,0 6px 18px #4a3a1c1f}.round{place-items:center;width:56px;height:56px;padding:0;display:grid}.round svg{fill:none;stroke:currentColor;stroke-width:2.4px;stroke-linecap:round;stroke-linejoin:round;width:30px;height:30px}.turn{width:64px;height:64px}.turn svg{stroke-width:3px;width:34px;height:34px}button:hover:not(:disabled),.home:hover{background:#fff}button:active:not(:disabled),.home:active{transform:scale(.92)}button:disabled{opacity:.3;cursor:default}button:focus-visible,.home:focus-visible{outline:3px solid var(--red);outline-offset:3px}button[aria-pressed=true]{background:var(--yellow)}#sound[aria-pressed=true] .off,#sound[aria-pressed=false] .on,#view[aria-pressed=true] .closer,#view[aria-pressed=false] .wider{display:none}.home{left:max(14px, env(safe-area-inset-left));top:max(14px, env(safe-area-inset-top));position:fixed}.tools{right:max(14px, env(safe-area-inset-right));top:max(14px, env(safe-area-inset-top));gap:10px;display:flex;position:fixed}.bar{left:0;right:0;bottom:max(18px, env(safe-area-inset-bottom));pointer-events:none;justify-content:center;align-items:center;gap:14px;display:flex;position:fixed}.bar>*{pointer-events:auto}.home,.tools,.bar{opacity:0;transition:opacity .8s .6s}.home{transition:opacity .8s .6s,transform .16s,background .18s}body.ready .home,body.ready .tools,body.ready .bar{opacity:1}#place{text-align:center;min-width:120px;color:var(--soft);font-size:16px;font-weight:700}#again{min-height:56px;padding:0 26px;font-size:18px}#hint{left:50%;bottom:calc(max(18px, env(safe-area-inset-bottom)) + 82px);color:var(--soft);text-align:center;pointer-events:none;opacity:0;background:#ffffffdb;border-radius:999px;width:max-content;max-width:calc(100vw - 48px);margin:0;padding:10px 20px;font-size:16px;font-weight:700;transition:opacity .8s;position:fixed;transform:translate(-50%)}body.ready #hint{opacity:1;transition-delay:1.2s}body.ready #hint.gone{opacity:0;transition-delay:0s}@media (orientation:landscape){body.one-page .tools{flex-direction:column}body.one-page #place{display:none}body.one-page .turn{position:fixed;top:calc(50% - 32px)}body.one-page #back{left:max(10px, env(safe-area-inset-left))}body.one-page #next{right:max(10px, env(safe-area-inset-right))}body.one-page #hint{bottom:max(22px, env(safe-area-inset-bottom))}}.sr-only{clip-path:inset(50%);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}</style>
+    <script type="module" crossorigin src="./assets/modulepreload-polyfill-P2Xu9kJm.js"></script>
+    <script type="module" crossorigin src="./assets/main-Cybhiy27.js"></script>
+  </head>
+  <body>
+    <canvas id="stage" aria-label="A picture book. Tap or swipe to turn the page."></canvas>
+    <p id="loading">Fetching the book…</p>
+    <p id="hint">Tap the book to open it. Then tap or swipe to go on.</p>
+
+    <a class="home round" href="./" aria-label="Back to the bookshelf">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 26h24M8 26V9h5v17M13 26V6h5v20M19.5 26l-2-15 4.6-.7 2.2 15.2" /></svg>
+    </a>
+    <div class="tools">
+      <button id="view" class="round" type="button" aria-pressed="false" aria-label="Show one page, bigger">
+        <svg class="closer" viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="14" r="8.5" /><path d="M20.5 20.5L27 27M14 10.5v7M10.5 14h7" /></svg>
+        <svg class="wider" viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="14" r="8.5" /><path d="M20.5 20.5L27 27M10.5 14h7" /></svg>
+      </button>
+      <button id="sound" class="round" type="button" aria-pressed="true" aria-label="Turn the page sounds off">
+        <svg class="on" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 12.5v7h4.5L16 25V7l-6.5 5.5zM20.5 12a5.6 5.6 0 0 1 0 8M23.8 8.5a10.4 10.4 0 0 1 0 15" /></svg>
+        <svg class="off" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 12.5v7h4.5L16 25V7l-6.5 5.5zM21 12.5l6 7M27 12.5l-6 7" /></svg>
+      </button>
+    </div>
+
+    <div class="bar">
+      <button id="back" class="round turn" type="button" aria-label="Go back">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M19.5 7l-9 9 9 9" /></svg>
+      </button>
+      <span id="place">Cover</span>
+      <button id="next" class="round turn" type="button" aria-label="Go on">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M12.5 7l9 9-9 9" /></svg>
+      </button>
+      <button id="again" type="button" hidden>Read again</button>
+    </div>
+
+    <p id="spoken" class="sr-only" aria-live="polite"></p>
+    <script type="application/json" id="book">
+{
+ "faces": "/books/mae2/",
+ "items": [
+  {
+   "board": true,
+   "front": "cover-front",
+   "back": "endpaper"
+  },
+  {
+   "front": "title",
+   "back": "text-01"
+  },
+  {
+   "front": "pic-01",
+   "back": "text-02"
+  },
+  {
+   "front": "pic-02",
+   "back": "text-03"
+  },
+  {
+   "front": "pic-03",
+   "back": "text-04"
+  },
+  {
+   "front": "pic-04",
+   "back": "text-05"
+  },
+  {
+   "front": "pic-05",
+   "back": "text-06"
+  },
+  {
+   "front": "pic-06",
+   "back": "text-07"
+  },
+  {
+   "front": "pic-07",
+   "back": "text-08"
+  },
+  {
+   "front": "pic-08",
+   "back": "text-09"
+  },
+  {
+   "front": "pic-09",
+   "back": "text-10"
+  },
+  {
+   "front": "pic-10",
+   "back": "text-11"
+  },
+  {
+   "front": "pic-11",
+   "back": "text-12"
+  },
+  {
+   "front": "pic-12",
+   "back": "words"
+  },
+  {
+   "front": "activities",
+   "back": "the-end"
+  },
+  {
+   "board": true,
+   "front": "endpaper",
+   "back": "cover-back"
+  }
+ ],
+ "views": [
+  [
+   "Cover",
+   "Cover. 小梅和新朋友. Mae and the New Friend."
+  ],
+  [
+   "Title page",
+   "Title page. 小梅和新朋友. Mae and the New Friend."
+  ],
+  [
+   "Page 1",
+   "Page 1. 自从那个许愿灯的晚上，小梅每天都下山来找朵朵玩。中秋节快到了。她们在老梅树下，一起做一盏大大的灯笼。 Ever since the night of the wishing lantern, Mae came down the mountain every day to play with Duoduo. The Moon Festival was coming soon. Under the old plum tree, the two of them were making one big lantern together. Word: 秋, qiū, autumn."
+  ],
+  [
+   "Page 2",
+   "Page 2. 一天早上，雾里走出一只天蓝色的独角兽。她有紫色的鬃毛、粉红色的角和金色的蹄子，名叫艾迪。小梅从来没有见过别的独角兽，她的心怦怦直跳。 One misty morning, a sky-blue unicorn stepped out of the fog. She had a purple mane, a pink horn and golden hooves, and her name was Addie. Mae had never met another unicorn in her whole life. Her heart went thump, thump, thump. Word: 蓝, lán, blue."
+  ],
+  [
+   "Page 3",
+   "Page 3. 小梅和艾迪跑上石头山峰，从一座山峰跳到另一座山峰。那么高的地方，小女孩上不去。朵朵在山下挥着手喊：“等等我！”可是没有人听见。 Mae and Addie raced up the stone peaks and leapt from one peak to the next. No girl could climb that high. Far below, Duoduo waved and called, “Wait for me!” But nobody heard. Word: 等, děng, to wait."
+  ],
+  [
+   "Page 4",
+   "Page 4. 第二天，小梅没有来。第三天，小梅还是没有来。朵朵带着纸和浆糊，在老梅树下等了又等。灯笼只做好了一半。 The next day, Mae did not come. The day after that, Mae still did not come. Duoduo waited and waited under the old plum tree with her paper and her paste. The lantern was only half made. Word: 半, bàn, half."
+  ],
+  [
+   "Page 5",
+   "Page 5. 朵朵的心里像压着一块冰凉的石头。“小梅有独角兽朋友了，”她小声说，“她是不是不需要我了？”朵朵低下头，一个人走开了。 Duoduo felt as if a cold stone were sitting on her heart. “Mae has a unicorn friend now,” she whispered. “Maybe she doesn't need me any more.” She lowered her head and walked away, all by herself. Word: 心, xīn, heart."
+  ],
+  [
+   "Page 6",
+   "Page 6. 小溪边坐着另一个女孩，她有一头棕色的头发。她一边往水里扔树叶，一边看着山峰上的两只独角兽。“蓝色的那只是我的朋友，”娜娜说，“以前是。” By the stream sat another girl, with brown hair. She was dropping leaves into the water and watching the two unicorns up on the peaks. “The blue one is my friend,” said Nedaly. “Well, she used to be.” Word: 叶, yè, leaf."
+  ],
+  [
+   "Page 7",
+   "Page 7. “我也是。”朵朵在她身边坐下，“我觉得自己像一盏没有人点亮的灯笼。”原来，她们谁也没有把心里的话告诉自己的独角兽。“走，”朵朵说，“我们一起把灯笼做完，然后去告诉她们。” “Me too.” Duoduo sat down beside her. “I feel like a lantern nobody lit.” It turned out that neither girl had told her unicorn how she felt. “Come on,” said Duoduo. “Let's finish the lantern together. Then let's go and tell them.” Word: 也, yě, also, too."
+  ],
+  [
+   "Page 8",
+   "Page 8. 傍晚，小梅终于跑来了。她看见灯笼已经做好了，没有等她。朵朵的声音在发抖，可是她说了出来：“你忘了我们的灯笼。我觉得自己被丢下了。” That evening, Mae came trotting up at last. She saw the lantern, finished without her. Duoduo's voice shook, but she said it: “You forgot our lantern. I felt left out.” Word: 忘, wàng, to forget."
+  ],
+  [
+   "Page 9",
+   "Page 9. 小梅的耳朵垂了下来。“我第一次见到别的独角兽，太高兴了，忘了回头看看你。对不起。”艾迪也低下了头。朵朵问：“你有了她，还有我的位置吗？” Mae's ears drooped. “It was the first time I had ever met another unicorn. I was so happy that I forgot to look back for you. I'm sorry.” Addie hung her head too. But Duoduo asked, “Now that you have her, is there still room for me?” Word: 对, duì, right, correct."
+  ],
+  [
+   "Page 10",
+   "Page 10. 小梅用角轻轻一碰，大灯笼亮了。朵朵借它的火，点亮了一盏小灯，又一盏，又一盏。“你看，”小梅说，“它点亮了三盏灯，自己的光一点也没有变少。朋友也是这样。” Mae touched the big lantern with her horn, and it began to glow. Duoduo borrowed its flame and lit one little lantern, then another, then another. “Look,” said Mae. “It has lit three more lanterns, and its own light is not one bit smaller. Friends are like that too.” Word: 光, guāng, light."
+  ],
+  [
+   "Page 11",
+   "Page 11. 中秋节的晚上，月亮又大又圆。小梅和艾迪跪下来，让朵朵和娜娜骑到背上，一起登上了最高的山峰。一个月饼，切成了四块。 On the night of the Moon Festival, the moon was big and round. Mae and Addie knelt down so that Duoduo and Nedaly could climb onto their backs, and together they all went up to the highest peak. One mooncake was cut into four pieces. Word: 圆, yuán, round."
+  ],
+  [
+   "Page 12",
+   "Page 12. 山顶上，四盏灯笼亮亮的。朵朵数了数：“一、二、三、四，四个好朋友！”那天晚上，月亮是满的。可是心永远不会满，永远装得下一个新朋友。 On the mountaintop, four lanterns glowed. Duoduo counted: “One, two, three, four. Four good friends!” The moon was full that night. But a heart never gets full. It always has room for one more friend. Word: 满, mǎn, full."
+  ],
+  [
+   "For grown-ups",
+   "For grown-ups. The words in this book, and three things to do together."
+  ],
+  [
+   "The end",
+   "完. The end."
+  ],
+  [
+   "Back cover",
+   "Back cover."
+  ]
+ ]
+}
+    </script>
+  </body>
+</html>

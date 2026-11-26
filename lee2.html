@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex" />
+    <title>Lee and the Bots 2: The Night the City Shook</title>
+    <style>:root{--ink:#2b3a2e;--soft:#5c6b5e;--red:#c9463b;--yellow:#f4c430}html,body{touch-action:none;height:100%;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;background:radial-gradient(90% 70% at 72% 22%,#fffdf6 0%,#fffdf600 70%),linear-gradient(200deg,#f7f1df 0%,#ece9d2 55%,#dfe6cf 100%);margin:0;font-family:ui-rounded,SF Pro Rounded,Nunito,Avenir Next,system-ui,sans-serif;overflow:hidden}#stage{cursor:grab;opacity:0;width:100%;height:100%;transition:opacity 1.4s;display:block}#stage.pulling{cursor:grabbing}body.ready #stage{opacity:1}#loading{color:var(--soft);pointer-events:none;place-items:center;font-size:18px;font-weight:600;transition:opacity .6s;display:grid;position:fixed;inset:0}body.ready #loading{opacity:0}button,.home{font:inherit;color:var(--ink);cursor:pointer;white-space:nowrap;touch-action:manipulation;background:#ffffffe6;border:0;border-radius:999px;font-weight:700;transition:transform .16s,background .18s,opacity .3s;box-shadow:0 1px 2px #4a3a1c29,0 6px 18px #4a3a1c1f}.round{place-items:center;width:56px;height:56px;padding:0;display:grid}.round svg{fill:none;stroke:currentColor;stroke-width:2.4px;stroke-linecap:round;stroke-linejoin:round;width:30px;height:30px}.turn{width:64px;height:64px}.turn svg{stroke-width:3px;width:34px;height:34px}button:hover:not(:disabled),.home:hover{background:#fff}button:active:not(:disabled),.home:active{transform:scale(.92)}button:disabled{opacity:.3;cursor:default}button:focus-visible,.home:focus-visible{outline:3px solid var(--red);outline-offset:3px}button[aria-pressed=true]{background:var(--yellow)}#sound[aria-pressed=true] .off,#sound[aria-pressed=false] .on,#view[aria-pressed=true] .closer,#view[aria-pressed=false] .wider{display:none}.home{left:max(14px, env(safe-area-inset-left));top:max(14px, env(safe-area-inset-top));position:fixed}.tools{right:max(14px, env(safe-area-inset-right));top:max(14px, env(safe-area-inset-top));gap:10px;display:flex;position:fixed}.bar{left:0;right:0;bottom:max(18px, env(safe-area-inset-bottom));pointer-events:none;justify-content:center;align-items:center;gap:14px;display:flex;position:fixed}.bar>*{pointer-events:auto}.home,.tools,.bar{opacity:0;transition:opacity .8s .6s}.home{transition:opacity .8s .6s,transform .16s,background .18s}body.ready .home,body.ready .tools,body.ready .bar{opacity:1}#place{text-align:center;min-width:120px;color:var(--soft);font-size:16px;font-weight:700}#again{min-height:56px;padding:0 26px;font-size:18px}#hint{left:50%;bottom:calc(max(18px, env(safe-area-inset-bottom)) + 82px);color:var(--soft);text-align:center;pointer-events:none;opacity:0;background:#ffffffdb;border-radius:999px;width:max-content;max-width:calc(100vw - 48px);margin:0;padding:10px 20px;font-size:16px;font-weight:700;transition:opacity .8s;position:fixed;transform:translate(-50%)}body.ready #hint{opacity:1;transition-delay:1.2s}body.ready #hint.gone{opacity:0;transition-delay:0s}@media (orientation:landscape){body.one-page .tools{flex-direction:column}body.one-page #place{display:none}body.one-page .turn{position:fixed;top:calc(50% - 32px)}body.one-page #back{left:max(10px, env(safe-area-inset-left))}body.one-page #next{right:max(10px, env(safe-area-inset-right))}body.one-page #hint{bottom:max(22px, env(safe-area-inset-bottom))}}.sr-only{clip-path:inset(50%);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}</style>
+    <script type="module" crossorigin src="./assets/modulepreload-polyfill-P2Xu9kJm.js"></script>
+    <script type="module" crossorigin src="./assets/main-Cybhiy27.js"></script>
+  </head>
+  <body>
+    <canvas id="stage" aria-label="A picture book. Tap or swipe to turn the page."></canvas>
+    <p id="loading">Fetching the book…</p>
+    <p id="hint">Tap the book to open it. Then tap or swipe to go on.</p>
+
+    <a class="home round" href="./" aria-label="Back to the bookshelf">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 26h24M8 26V9h5v17M13 26V6h5v20M19.5 26l-2-15 4.6-.7 2.2 15.2" /></svg>
+    </a>
+    <div class="tools">
+      <button id="view" class="round" type="button" aria-pressed="false" aria-label="Show one page, bigger">
+        <svg class="closer" viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="14" r="8.5" /><path d="M20.5 20.5L27 27M14 10.5v7M10.5 14h7" /></svg>
+        <svg class="wider" viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="14" r="8.5" /><path d="M20.5 20.5L27 27M10.5 14h7" /></svg>
+      </button>
+      <button id="sound" class="round" type="button" aria-pressed="true" aria-label="Turn the page sounds off">
+        <svg class="on" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 12.5v7h4.5L16 25V7l-6.5 5.5zM20.5 12a5.6 5.6 0 0 1 0 8M23.8 8.5a10.4 10.4 0 0 1 0 15" /></svg>
+        <svg class="off" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 12.5v7h4.5L16 25V7l-6.5 5.5zM21 12.5l6 7M27 12.5l-6 7" /></svg>
+      </button>
+    </div>
+
+    <div class="bar">
+      <button id="back" class="round turn" type="button" aria-label="Go back">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M19.5 7l-9 9 9 9" /></svg>
+      </button>
+      <span id="place">Cover</span>
+      <button id="next" class="round turn" type="button" aria-label="Go on">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M12.5 7l9 9-9 9" /></svg>
+      </button>
+      <button id="again" type="button" hidden>Read again</button>
+    </div>
+
+    <p id="spoken" class="sr-only" aria-live="polite"></p>
+    <script type="application/json" id="book">
+{
+ "faces": "/books/lee2/",
+ "items": [
+  {
+   "board": true,
+   "front": "cover-front",
+   "back": "endpaper"
+  },
+  {
+   "front": "title",
+   "back": "text-01"
+  },
+  {
+   "front": "pic-01",
+   "back": "text-02"
+  },
+  {
+   "front": "pic-02",
+   "back": "text-03"
+  },
+  {
+   "front": "pic-03",
+   "back": "text-04"
+  },
+  {
+   "front": "pic-04",
+   "back": "text-05"
+  },
+  {
+   "front": "pic-05",
+   "back": "text-06"
+  },
+  {
+   "front": "pic-06",
+   "back": "text-07"
+  },
+  {
+   "front": "pic-07",
+   "back": "text-08"
+  },
+  {
+   "front": "pic-08",
+   "back": "text-09"
+  },
+  {
+   "front": "pic-09",
+   "back": "text-10"
+  },
+  {
+   "front": "pic-10",
+   "back": "text-11"
+  },
+  {
+   "front": "pic-11",
+   "back": "text-12"
+  },
+  {
+   "front": "pic-12",
+   "back": "words"
+  },
+  {
+   "front": "activities",
+   "back": "the-end"
+  },
+  {
+   "board": true,
+   "front": "endpaper",
+   "back": "cover-back"
+  }
+ ],
+ "views": [
+  [
+   "Cover",
+   "Cover. 小力和机器人 2：大地摇动的夜晚. Lee and the Bots · Book 2: The Night the City Shook."
+  ],
+  [
+   "Title page",
+   "Title page. 小力和机器人 2：大地摇动的夜晚. Lee and the Bots · Book 2: The Night the City Shook."
+  ],
+  [
+   "Page 1",
+   "Page 1. 小力和机器人们跑上楼梯，来到楼顶。手套一闪一闪，是蓝色的光。远远的地方，也有一点蓝光在一闪一闪。他们跑过水塔，钻过晾衣绳，朝最近的那点蓝光跑去。 Lee and the Bots ran up the stairs to the roof. The band blinked blue. Far away, a blue light blinked back. They hurried past the water tanks and under the washing lines, towards the nearest one. Word: 蓝, lán, blue."
+  ],
+  [
+   "Page 2",
+   "Page 2. 旁边的楼顶上，站着一个小机器人，白色、红色、蓝色，头盔上有一弯月牙。一片树叶飘了下来。唰！小刀一挥，树叶变成了两半。“我叫快刀。”小机器人鞠了一躬，“我看见了你们的光。我一直在等有人回答我。” On the next roof stood a small robot, white and red and blue, with a curved crest on his helmet. A leaf drifted down. Swish! Two halves floated to the ground. “I am Slice,” said the robot, and he bowed. “I saw your light. I have been waiting for someone to answer.” Word: 刀, dāo, blade."
+  ],
+  [
+   "Page 3",
+   "Page 3. 轰！脚下的楼顶跳了一下。轰！水塔里的水晃来晃去，晾衣绳摇个不停。整座城市的灯都灭了。“地震了！”小豆喊。小力马上蹲下，护住头，抓得紧紧的，一直等到大地不摇了。 BOOM. The roof jumped under their feet. BOOM. The water tanks sloshed and the washing lines danced. All across the city, the lights went out. “Earthquake!” cried Pip. Lee dropped down, covered his head and held on tight, until the shaking stopped. Word: 摇, yáo, to shake."
+  ],
+  [
+   "Page 4",
+   "Page 4. 黑黑的街上，人们穿着睡衣走了出来。一面墙裂开了，一盏路灯歪了。“大家要走到公园去，”大盾说，“空地才安全。”小力的手套亮起了红光。“那我们去帮助所有的人，”他说，“一个也不落下。” Down in the dark street, people were coming out in their pyjamas. A wall had cracked. A street lamp leaned. “Everyone must walk to the park,” said Block. “Open ground is safe ground.” Lee's band blazed red. “Then we will help everybody,” he said. “Every single one.” Word: 走, zǒu, to walk."
+  ],
+  [
+   "Page 5",
+   "Page 5. 闪电一家一家地敲门：咚咚咚，快起来！大盾举起盾牌，护住一位老爷爷的头。小豆飞在最前面，用亮光给大家照路。快刀砍断了绳子，打开了一扇卡住的大门。小力抱着一个小女孩的小狗，一步一步走下楼梯。 Bolt raced from door to door: knock, knock, wake up! Block held his shield over an old man's head. Pip flew in front with his thrusters glowing, to light the way. Slice cut the rope on a gate that would not open. And Lee carried a little girl's puppy all the way down the stairs. Word: 门, mén, door."
+  ],
+  [
+   "Page 6",
+   "Page 6. 大地又摇了起来。“救命！”左边有人喊。“在这里！”右边有人喊。“在上面！”高高的楼上也有人喊。小力往左跑，停下了。往右跑，又停下了。人那么多，他只有一个。手套上的光一闪一闪，快要灭了。“我帮不了所有的人，”他小声说，“我不够好。” Then the ground shook again. “Help!” called a voice on the left. “Over here!” called a voice on the right. “Up here!” called a voice from high above. Lee ran one way and stopped. He ran the other way and stopped. There were so many people, and only one of him. The light on his band began to flicker. “I can't help everybody,” he whispered. “I'm not good enough.” Word: 多, duō, many."
+  ],
+  [
+   "Page 7",
+   "Page 7. 旁边有什么东西在咔咔响。是快刀手里的刀，在不停地发抖。“我也害怕，”快刀说，“这座城市里的绳子，我砍不完。所以我只砍眼前的这一根，然后是下一根。”他指了指街上。抱小狗的女孩正扶着一位老奶奶下台阶。老爷爷抱着一个小宝宝。“你看，小力。你帮过的人，也会去帮别人。” Something was rattling beside him. It was Slice's sword, shaking in his hand. “I am scared too,” said Slice. “I cannot cut every rope in this city. So I cut the one in front of me. Then the next one.” He pointed down the street. The girl with the puppy was helping an old lady down the steps. The old man was carrying a baby. “Look, Lee. Everyone you help can help someone too.” Word: 怕, pà, afraid."
+  ],
+  [
+   "Page 8",
+   "Page 8. 小力爬上一张长椅。以前，他一句话也说不出来。现在，他深深吸了一口气。“大家听我说！牵住身边那个人的手！走到公园去！帮助你旁边的人！”一只手牵起另一只手，一直连到街的那一头。小力手上的手套变成了蓝色，像月亮一样亮。 Lee climbed onto a bench. Once he could not say a single word. Now he took a big breath. “Everybody! Hold the hand of the person next to you! Walk to the park! Help the one beside you!” Hand took hand, all the way down the street. And on Lee's hand the band turned blue, as bright as the moon. Word: 牵, qiān, to hold hands."
+  ],
+  [
+   "Page 9",
+   "Page 9. 轰！街道又摇了一下。“声音是从下面传来的。”闪电说。工地的大坑里，一根倒下的钢梁下面，坐着一个橙色的大机器人。他正用拳头敲着地面。轰！轰！ BOOM. The street shook once more. “It's coming from under there,” said Bolt. In a deep pit at the building site, under a fallen steel beam, sat a big orange robot. He was pounding the ground with his fists. BOOM. BOOM. Word: 敲, qiāo, to knock."
+  ],
+  [
+   "Page 10",
+   "Page 10. “我叫轰轰。”机器人哭着说，“我在黑黑的地下醒来，没有人看得见我的灯。所以我敲地面，越敲越用力。我把城市弄坏了。我是个坏机器人。”“你不坏，”小力说，“你只是害怕，又没有人陪。我知道那种感觉。”钢梁太重，小力和机器人们抬不动。小力朝街上喊了一声，许多只手一起拉起了钢梁。一、二、三，起！轰轰出来了。 “I am Smash,” sobbed the robot. “I woke up down here in the dark. Nobody could see my light, so I knocked. Then I knocked harder. I broke your city. I am a bad robot.” “You're not bad,” said Lee. “You were scared and alone. I know how that feels.” The beam was too heavy for Lee and the Bots. So Lee called up to the street, and many hands hauled on the cable. One, two, three, heave! Smash was free. Word: 黑, hēi, dark."
+  ],
+  [
+   "Page 11",
+   "Page 11. 去公园的路上，一棵大树倒在小桥上，谁也过不去。轰轰看着自己的大手：“这双手只会把东西弄坏。”“试一试。”小力说。轰轰轻轻一举，就把大树举了起来，像举起一根小树枝。他高高地举着，整条街的人手牵着手，从树下走了过去。他的力气，原来可以帮助大家。 On the way to the park, a great tree had fallen across the little bridge. Nobody could pass. Smash looked at his big hands. “These only break things,” he said. “Try,” said Lee. Smash lifted the tree as if it were a twig, and he held it high while the whole street walked under, hand in hand. His strength could help, after all. Word: 力, lì, strength."
+  ],
+  [
+   "Page 12",
+   "Page 12. 太阳升到了公园上面。大家都到了。妈妈和姥姥紧紧抱住小力。“我没能帮到所有的人。”小力对快刀说。“谁也做不到，”快刀说，“一个人不够。所以才有我们这么多人。”轰轰看着路上的裂缝：“对不起。这么多裂缝，我补不完。”“先补眼前的这一条，”小力说，“然后是下一条。”这时候，很深很深的地下，轻轻地，有什么东西也敲了一下。 The sun came up over the park. Everyone was there, and Mama and Lau Lau hugged Lee tight. “I couldn't help everybody,” Lee told Slice. “Nobody can,” said Slice. “One is not enough. That is why there are so many of us.” Smash looked at the cracks in the road. “I am sorry. I can never mend them all.” “Just the one in front of you,” said Lee. “Then the next one.” And far below the ground, very faintly, something knocked back. Word: 够, gòu, enough."
+  ],
+  [
+   "For grown-ups",
+   "For grown-ups. The words in this book, and three things to do together."
+  ],
+  [
+   "The end",
+   "完. The end."
+  ],
+  [
+   "Back cover",
+   "Back cover."
+  ]
+ ]
+}
+    </script>
+  </body>
+</html>
